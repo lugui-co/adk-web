@@ -15,6 +15,14 @@
 -->
 
 <div class="session-wrapper">
+  <mat-form-field appearance="outline" class="user-filter-field">
+    <mat-label>Filter by User ID</mat-label>
+    <input matInput [(ngModel)]="userIdFilter" (keyup.enter)="onFilterChange()" placeholder="Enter User ID and press Enter">
+    <button mat-icon-button matSuffix *ngIf="userIdFilter" (click)="clearFilter()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
   <div class="session-tab-container" style="margin-top: 16px;">
     @for (session of sessionList; track session) {
       <div (click)="getSession(session.id)" [ngClass]="session.id === sessionId ? 'session-item current': 'session-item'">

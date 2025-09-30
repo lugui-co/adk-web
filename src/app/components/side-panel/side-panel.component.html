@@ -52,7 +52,6 @@
         <span class="tab-label">{{ i18n.sessionsTabLabel }}</span>
       </ng-template>
       <app-session-tab
-        [userId]="userId"
         [appName]="appName"
         [sessionId]="sessionId"
         (sessionSelected)="sessionSelected.emit($event)"
