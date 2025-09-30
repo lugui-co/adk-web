@@ -29,3 +29,7 @@ e2e/*.map
 
 # System Files
 .DS_Store
+
+# AWS Deploy
+.aws-credentials
+cloudfront-dist-id.txt
