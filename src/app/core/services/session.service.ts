@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Injectable, InjectionToken} from '@angular/core';
 import {Observable} from 'rxjs';
 
@@ -40,12 +40,12 @@ export class SessionService {
     return new Observable<Session>();
   }
 
-  listSessions(userId: string, appName: string) {
+  listSessions(appName: string, userId: string) {
     if (this.apiServerDomain != undefined) {
       const url =
-          this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
-
-      return this.http.get<any>(url);
+          `${this.apiServerDomain}/apps/${appName}/users/${userId}/sessions`;
+      const params = new HttpParams().set('page_size', '1000');
+      return this.http.get<any>(url, {params});
     }
     return new Observable<Session[]>();
   }

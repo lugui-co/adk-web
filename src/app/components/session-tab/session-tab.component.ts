@@ -21,16 +21,27 @@ import {Subject} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {Session} from '../../core/models/Session';
 import {SessionService, SESSION_SERVICE} from '../../core/services/session.service';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {FormsModule} from '@angular/forms';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
     selector: 'app-session-tab',
     templateUrl: './session-tab.component.html',
     styleUrl: './session-tab.component.scss',
-    imports: [NgClass],
+    imports: [
+      CommonModule,
+      MatFormFieldModule,
+      MatInputModule,
+      FormsModule,
+      MatIconModule,
+      MatButtonModule,
+    ],
 })
 export class SessionTabComponent implements OnInit {
-  @Input() userId: string = '';
   @Input() appName: string = '';
   @Input() sessionId: string = '';
 
@@ -38,38 +49,48 @@ export class SessionTabComponent implements OnInit {
   @Output() readonly sessionReloaded = new EventEmitter<Session>();
 
   sessionList: any[] = [];
+  userIdFilter: string = 'user';
 
   private refreshSessionsSubject = new Subject<void>();
 
   constructor(
     @Inject(SESSION_SERVICE) private sessionService: SessionService,
     private dialog: MatDialog,
-  ) {
-    this.refreshSessionsSubject
-        .pipe(
-            switchMap(
-                () =>
-                    this.sessionService.listSessions(this.userId, this.appName),
-                ),
-            )
-        .subscribe((res) => {
-          res = res.sort(
-              (a: any, b: any) =>
-                  Number(b.lastUpdateTime) - Number(a.lastUpdateTime),
-          );
-          this.sessionList = res;
-        });
-  }
+  ) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.refreshSessionsSubject.next();
-    }, 500);
+    this.getSessionList();
+  }
+
+  getSessionList() {
+    if (!this.userIdFilter) {
+      this.sessionList = [];
+      return;
+    }
+    this.sessionService.listSessions(this.appName, this.userIdFilter)
+      .subscribe((res: any) => {
+        this.sessionList = res ?? [];
+        this.sessionList.sort(
+          (a, b) => Number(b.lastUpdateTime) - Number(a.lastUpdateTime),
+        );
+      }, (error) => {
+        this.sessionList = [];
+        console.error('Error fetching sessions:', error);
+      });
+  }
+
+  onFilterChange() {
+    this.getSessionList();
+  }
+
+  clearFilter() {
+    this.userIdFilter = '';
+    this.sessionList = [];
   }
 
   getSession(sessionId: string) {
     this.sessionService
-      .getSession(this.userId, this.appName, sessionId)
+      .getSession(this.userIdFilter, this.appName, sessionId)
       .subscribe((res) => {
         const session = this.fromApiResultToSession(res);
         this.sessionSelected.emit(session);
@@ -96,7 +117,7 @@ export class SessionTabComponent implements OnInit {
 
   reloadSession(sessionId: string) {
     this.sessionService
-      .getSession(this.userId, this.appName, sessionId)
+      .getSession(this.userIdFilter, this.appName, sessionId)
       .subscribe((res) => {
         const session = this.fromApiResultToSession(res);
         this.sessionReloaded.emit(session);
@@ -104,7 +125,7 @@ export class SessionTabComponent implements OnInit {
   }
 
   refreshSession(session?: string) {
-    this.refreshSessionsSubject.next();
+    this.getSessionList();
     if (this.sessionList.length <= 1) {
       return undefined;
     } else {

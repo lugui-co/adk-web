@@ -49,7 +49,7 @@ sudo npm install
 ### Run adk web
 
 ```bash
-npm run serve --backend=http://localhost:8000
+pnpm run serve --backend=http://localhost:8000
 ```
 
 ### Run adk api server
@@ -65,6 +65,28 @@ If you see `adk command not found`, then be sure to install `google-adk` (or rem
 ### Happy development
 
 Go to `localhost:4200` and start developing!
+
+## ☁️ Deploy na AWS
+
+Este projeto pode ser facilmente deployado na AWS usando S3 + CloudFront. Consulte:
+
+- **[DEPLOY-QUICKSTART.md](./DEPLOY-QUICKSTART.md)** - Guia rápido de deploy
+- **[DEPLOY.md](./DEPLOY.md)** - Documentação completa de deploy
+- **[ARQUITETURA-AWS.md](./ARQUITETURA-AWS.md)** - Detalhes da arquitetura
+
+### Deploy Rápido
+
+```bash
+# 1. Provisionar infraestrutura (primeira vez)
+cd ../lugui-api-infra
+terraform apply -var-file="environments/local.development.tfvars"
+
+# 2. Deploy da aplicação
+cd ../adk-web
+./deploy.sh development
+```
+
+Após o deploy, acesse: **https://adk.dev.lugui.ai**
 
 ## 🤝 Contributing
 
