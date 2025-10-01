@@ -90,8 +90,8 @@ cd adk-web
 
 **Nota**: Configure as variáveis de ambiente antes:
 ```bash
-export CLOUDFRONT_DIST_ID_DEV="E1234567890ABC"
-export CLOUDFRONT_DIST_ID_PROD="E0987654321XYZ"
+export CLOUDFRONT_DIST_ID_DEV="E2OB3FUY0KFLTU"
+export CLOUDFRONT_DIST_ID_PROD="E3SQPPMQPUTRAN"
 ```
 
 ## 🔄 Deploy Automático (CI/CD)
